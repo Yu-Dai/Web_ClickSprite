@@ -8,11 +8,11 @@
     <meta name="keywords" content="點擊精靈,滑鼠點擊,自動化,輔助工具,自動點擊">
     
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3302498619485198"
             crossorigin="anonymous"></script>
     
     <link rel="stylesheet" href="styles.css">
-    <!-- <link rel="icon" type="image/png" href="favicon.png"> -->
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
     <!-- 導航列 -->
@@ -24,6 +24,7 @@
             <div class="nav-menu">
                 <a href="#download" class="nav-link">下載</a>
                 <a href="#features" class="nav-link">功能</a>
+                <a href="#verify" class="nav-link">功能驗證</a>
                 <a href="#pricing" class="nav-link">價格</a>
                 <a href="#support" class="nav-link">支援</a>
             </div>
@@ -81,7 +82,7 @@
             <div class="ad-container">
                 <ins class="adsbygoogle"
                      style="display:block"
-                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-client="ca-pub-3302498619485198"
                      data-ad-slot="1234567890"
                      data-ad-format="auto"
                      data-full-width-responsive="true"></ins>
@@ -146,7 +147,7 @@
             <div class="ad-container">
                 <ins class="adsbygoogle"
                      style="display:block"
-                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-client="ca-pub-3302498619485198"
                      data-ad-slot="0987654321"
                      data-ad-format="rectangle"></ins>
             </div>
@@ -236,6 +237,83 @@
             </div>
         </section>
 
+        <!-- 功能驗證區域 -->
+        <section id="verify" class="verify">
+            <div class="container">
+                <h2>功能驗證測試</h2>
+                <p class="verify-description">在購買前，您可以先在網頁上體驗 ClickSprite 的核心功能</p>
+                
+                <div class="verify-container">
+                    <!-- 測試區域 -->
+                    <div class="test-area" id="testArea">
+                        <div class="test-area-label">測試區域 - 點擊出現的目標按鈕</div>
+                    </div>
+
+                    <!-- 控制面板 -->
+                    <div class="control-panel">
+                        <!-- 控制按鈕 -->
+                        <div class="control-group">
+                            <h3>控制</h3>
+                            <div class="button-group">
+                                <button id="startBtn" class="btn btn-start">開始測試</button>
+                                <button id="stopBtn" class="btn btn-stop" disabled>停止測試</button>
+                            </div>
+                        </div>
+
+                        <!-- 統計資料 -->
+                        <div class="control-group">
+                            <h3>統計資料</h3>
+                            <div class="statistics">
+                                <div class="stat-item">
+                                    <span class="stat-label">按鈕出現時間：</span>
+                                    <span id="targetAppearTime">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">目標按鈕點擊時間：</span>
+                                    <span id="targetClickTime">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">下一步按鈕點擊時間：</span>
+                                    <span id="nextClickTime">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">測試次數：</span>
+                                    <span id="testCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 設定 -->
+                        <div class="control-group">
+                            <h3>設定</h3>
+                            <div class="settings">
+                                <div class="setting-item">
+                                    <label for="intervalInput">出現間隔：</label>
+                                    <input type="number" id="intervalInput" min="1" max="10000" value="3000">
+                                    <span>ms</span>
+                                </div>
+                                <div class="setting-item">
+                                    <label for="durationInput">持續時間：</label>
+                                    <input type="number" id="durationInput" min="500" max="10000" value="2000">
+                                    <span>ms</span>
+                                </div>
+                                <div class="setting-item">
+                                    <label for="colorInput">目標顏色：</label>
+                                    <input type="color" id="colorInput" value="#ff0000">
+                                    <span id="colorName">紅色</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下一步按鈕 -->
+                <div class="next-button-container">
+                    <button id="nextBtn" class="btn btn-next">下一步</button>
+                </div>
+            </div>
+        </section>
+
         <!-- 使用說明 -->
         <section class="help">
             <div class="container">
@@ -278,7 +356,7 @@
             <div class="ad-container">
                 <ins class="adsbygoogle"
                      style="display:block"
-                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-client="ca-pub-3302498619485198"
                      data-ad-slot="1122334455"
                      data-ad-format="auto"
                      data-full-width-responsive="true"></ins>
@@ -324,6 +402,7 @@
         </div>
     </footer>
 
+    <script src="key-generator.js"></script>
     <script src="script.js"></script>
     <script>
         // 初始化 Google AdSense

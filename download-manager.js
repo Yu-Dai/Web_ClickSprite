@@ -1,8 +1,8 @@
 // 下載管理器模組
 class DownloadManager {
     constructor() {
-        this.downloadUrl = 'https://github.com/Yu-Dai/Web_ClickSprite/releases/latest/download/ClickSprite.exe';
-        this.fallbackUrl = 'https://github.com/Yu-Dai/Web_ClickSprite/releases';
+        this.downloadUrl = 'https://github.com/yourusername/clicksprite/releases/latest/download/ClickSprite.exe';
+        this.fallbackUrl = 'https://github.com/yourusername/clicksprite/releases';
         this.version = '1.0.0';
         this.fileSize = '2.5 MB';
     }

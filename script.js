@@ -12,11 +12,16 @@ let userStats = {
 let adTimer = null;
 let isWatchingAd = false;
 
+// IPark 功能驗證相關變數
+let verifyApp = null;
+
 // 頁面載入完成後初始化
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
     loadUserStats();
     updateUI();
+    initializeVerify();
+    initializeKeyGenerator();
 });
 
 // 初始化頁面
@@ -162,7 +167,7 @@ function downloadProgram() {
         trackEvent('download', 'program_download');
         
         // 這裡應該替換為實際的下載連結
-        const downloadUrl = 'https://github.com/Yu-Dai/Web_ClickSprite/releases/latest/download/ClickSprite.exe';
+        const downloadUrl = 'https://github.com/yourusername/clicksprite/releases/latest/download/ClickSprite.exe';
         
         // 建立下載連結
         const link = document.createElement('a');
@@ -526,3 +531,289 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// IPark 功能驗證類別
+class IParkVerify {
+    constructor() {
+        this.isTestRunning = false;
+        this.testCount = 0;
+        this.targetButtons = [];
+        this.targetAppearTime = null;
+        this.targetClickTime = null;
+        this.nextClickTime = null;
+        this.targetButtonClicked = false;
+        this.nextButtonClicked = false;
+        this.testTimer = null;
+        this.targetColor = '#ff0000';
+        
+        // 顏色名稱對應
+        this.colorNames = {
+            '#ff0000': '紅色',
+            '#00ff00': '綠色',
+            '#0000ff': '藍色',
+            '#ffff00': '黃色',
+            '#ff00ff': '洋紅色',
+            '#00ffff': '青色',
+            '#ffa500': '橙色',
+            '#800080': '紫色',
+            '#ffc0cb': '粉色',
+            '#a52a2a': '棕色',
+            '#808080': '灰色',
+            '#008000': '深綠色'
+        };
+        
+        this.initializeElements();
+        this.bindEvents();
+        this.updateStatusDisplay();
+    }
+    
+    // 初始化 DOM 元素
+    initializeElements() {
+        this.testArea = document.getElementById('testArea');
+        this.status = document.getElementById('status');
+        this.startBtn = document.getElementById('startBtn');
+        this.stopBtn = document.getElementById('stopBtn');
+        this.nextBtn = document.getElementById('nextBtn');
+        this.targetAppearTimeEl = document.getElementById('targetAppearTime');
+        this.targetClickTimeEl = document.getElementById('targetClickTime');
+        this.nextClickTimeEl = document.getElementById('nextClickTime');
+        this.testCountEl = document.getElementById('testCount');
+        this.intervalInput = document.getElementById('intervalInput');
+        this.durationInput = document.getElementById('durationInput');
+        this.colorInput = document.getElementById('colorInput');
+        this.colorName = document.getElementById('colorName');
+    }
+    
+    // 綁定事件
+    bindEvents() {
+        if (this.startBtn) this.startBtn.addEventListener('click', () => this.startTest());
+        if (this.stopBtn) this.stopBtn.addEventListener('click', () => this.stopTest());
+        if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.nextButtonClick());
+        if (this.colorInput) this.colorInput.addEventListener('change', () => this.updateColor());
+        
+        // 測試區域點擊事件（用於除錯）
+        if (this.testArea) this.testArea.addEventListener('click', (e) => this.testAreaClick(e));
+    }
+    
+    // 開始測試
+    startTest() {
+        if (this.isTestRunning) return;
+        
+        this.isTestRunning = true;
+        this.testCount = 0;
+        this.targetClickTime = null;
+        this.nextClickTime = null;
+        this.targetButtonClicked = false;
+        this.nextButtonClicked = false;
+        
+        // 清除所有現有的目標按鈕
+        this.clearTargetButtons();
+        
+        // 更新 UI 狀態
+        if (this.startBtn) this.startBtn.disabled = true;
+        if (this.stopBtn) this.stopBtn.disabled = false;
+        
+        // 清除統計顯示
+        if (this.targetClickTimeEl) this.targetClickTimeEl.textContent = '-';
+        if (this.nextClickTimeEl) this.nextClickTimeEl.textContent = '-';
+        
+        // 開始計時器
+        const interval = this.intervalInput ? parseInt(this.intervalInput.value) : 3000;
+        this.testTimer = setInterval(() => this.createTargetButton(), interval);
+        
+        this.updateStatusDisplay();
+        console.log('測試開始');
+    }
+    
+    // 停止測試
+    stopTest() {
+        if (!this.isTestRunning) return;
+        
+        this.isTestRunning = false;
+        
+        // 停止計時器
+        if (this.testTimer) {
+            clearInterval(this.testTimer);
+            this.testTimer = null;
+        }
+        
+        // 清除所有目標按鈕
+        this.clearTargetButtons();
+        
+        // 重置點擊狀態
+        this.targetButtonClicked = false;
+        this.nextButtonClicked = false;
+        
+        // 更新 UI 狀態
+        if (this.startBtn) this.startBtn.disabled = false;
+        if (this.stopBtn) this.stopBtn.disabled = true;
+        
+        this.updateStatusDisplay();
+        console.log('測試停止');
+    }
+    
+    // 建立目標按鈕
+    createTargetButton() {
+        if (!this.isTestRunning || !this.testArea) return;
+        
+        // 計算隨機位置（避免邊界）
+        const testAreaRect = this.testArea.getBoundingClientRect();
+        const x = Math.random() * (testAreaRect.width - 20) + 10;
+        const y = Math.random() * (testAreaRect.height - 20) + 10;
+        
+        // 建立按鈕元素
+        const button = document.createElement('div');
+        button.className = 'target-button';
+        button.style.left = x + 'px';
+        button.style.top = y + 'px';
+        button.style.backgroundColor = this.targetColor;
+        
+        // 添加點擊事件
+        button.addEventListener('click', (e) => this.targetButtonClick(e, button));
+        
+        // 添加到測試區域
+        this.testArea.appendChild(button);
+        this.targetButtons.push(button);
+        
+        // 記錄出現時間（只有第一個按鈕時記錄）
+        if (this.targetButtons.length === 1) {
+            this.targetAppearTime = new Date();
+        }
+        
+        // 設定自動消失計時器
+        const duration = this.durationInput ? parseInt(this.durationInput.value) : 2000;
+        setTimeout(() => {
+            this.removeTargetButton(button);
+        }, duration);
+        
+        this.updateStatusDisplay();
+        console.log(`目標按鈕建立: 位置(${x.toFixed(1)}, ${y.toFixed(1)})`);
+    }
+    
+    // 移除目標按鈕
+    removeTargetButton(button) {
+        if (button && button.parentNode) {
+            button.classList.add('removing');
+            setTimeout(() => {
+                if (button.parentNode) {
+                    button.parentNode.removeChild(button);
+                }
+                const index = this.targetButtons.indexOf(button);
+                if (index > -1) {
+                    this.targetButtons.splice(index, 1);
+                }
+                
+                // 如果沒有目標按鈕了，重置點擊狀態
+                if (this.targetButtons.length === 0) {
+                    this.targetButtonClicked = false;
+                    this.nextButtonClicked = false;
+                    this.targetClickTime = null;
+                    this.nextClickTime = null;
+                    this.testCount++;
+                    this.updateStatusDisplay();
+                }
+            }, 200);
+        }
+    }
+    
+    // 清除所有目標按鈕
+    clearTargetButtons() {
+        this.targetButtons.forEach(button => {
+            if (button.parentNode) {
+                button.parentNode.removeChild(button);
+            }
+        });
+        this.targetButtons = [];
+    }
+    
+    // 目標按鈕點擊事件
+    targetButtonClick(e, button) {
+        e.stopPropagation();
+        
+        if (!this.targetButtonClicked) {
+            this.targetClickTime = new Date();
+            this.targetButtonClicked = true;
+            
+            // 計算反應時間
+            if (this.targetAppearTime && this.targetClickTimeEl) {
+                const responseTime = this.targetClickTime - this.targetAppearTime;
+                this.targetClickTimeEl.textContent = `${responseTime}ms`;
+            }
+            
+            this.updateStatusDisplay();
+            console.log('目標按鈕被點擊');
+        }
+    }
+    
+    // 下一步按鈕點擊事件
+    nextButtonClick() {
+        if (this.targetButtons.length > 0 && !this.nextButtonClicked) {
+            this.nextClickTime = new Date();
+            this.nextButtonClicked = true;
+            
+            // 計算反應時間
+            if (this.targetAppearTime && this.nextClickTimeEl) {
+                const responseTime = this.nextClickTime - this.targetAppearTime;
+                this.nextClickTimeEl.textContent = `${responseTime}ms`;
+            }
+            
+            this.updateStatusDisplay();
+            console.log('下一步按鈕被點擊');
+        }
+    }
+    
+    // 測試區域點擊事件（除錯用）
+    testAreaClick(e) {
+        if (e.target === this.testArea) {
+            console.log('測試區域被點擊，但沒有命中目標按鈕');
+        }
+    }
+    
+    // 更新顏色
+    updateColor() {
+        if (this.colorInput) {
+            this.targetColor = this.colorInput.value;
+            const colorName = this.colorNames[this.targetColor] || this.targetColor;
+            if (this.colorName) this.colorName.textContent = colorName;
+            console.log(`目標顏色更新為: ${colorName}`);
+        }
+    }
+    
+    // 更新狀態顯示
+    updateStatusDisplay() {
+        // 更新按鈕出現時間
+        if (this.targetButtons.length > 0 && this.targetAppearTime && this.targetAppearTimeEl) {
+            const elapsedTime = new Date() - this.targetAppearTime;
+            this.targetAppearTimeEl.textContent = `${elapsedTime}ms (共${this.targetButtons.length}個)`;
+        } else if (this.targetAppearTimeEl) {
+            this.targetAppearTimeEl.textContent = '-';
+        }
+        
+        // 更新測試次數
+        if (this.testCountEl) {
+            this.testCountEl.textContent = this.testCount;
+        }
+    }
+}
+
+// 初始化功能驗證
+function initializeVerify() {
+    if (document.getElementById('testArea')) {
+        verifyApp = new IParkVerify();
+        console.log('IPark 功能驗證程式已載入');
+    }
+}
+
+// 初始化金鑰生成器
+function initializeKeyGenerator() {
+    try {
+        if (typeof KeyGenerator !== 'undefined') {
+            window.keyGenerator = new KeyGenerator();
+            console.log('金鑰生成器已初始化');
+        } else {
+            console.warn('KeyGenerator 類別未載入');
+        }
+    } catch (error) {
+        console.error('初始化金鑰生成器失敗:', error);
+    }
+}
