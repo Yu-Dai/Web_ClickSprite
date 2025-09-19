@@ -162,7 +162,7 @@ function downloadProgram() {
         trackEvent('download', 'program_download');
         
         // 這裡應該替換為實際的下載連結
-        const downloadUrl = 'https://github.com/yourusername/clicksprite/releases/latest/download/ClickSprite.exe';
+        const downloadUrl = 'https://github.com/Yu-Dai/Web_ClickSprite/releases/latest/download/ClickSprite.exe';
         
         // 建立下載連結
         const link = document.createElement('a');
