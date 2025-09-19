@@ -633,6 +633,7 @@ body {
 .verify {
     padding: 80px 0;
     background: #f8f9fa;
+    min-height: 100vh;
 }
 
 .verify h2 {

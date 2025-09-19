@@ -801,6 +801,14 @@ function initializeVerify() {
     if (document.getElementById('testArea')) {
         verifyApp = new IParkVerify();
         console.log('IPark 功能驗證程式已載入');
+        
+        // 調試：檢查元素是否正確載入
+        console.log('測試區域元素:', document.getElementById('testArea'));
+        console.log('開始按鈕元素:', document.getElementById('startBtn'));
+        console.log('停止按鈕元素:', document.getElementById('stopBtn'));
+        console.log('控制面板元素:', document.querySelector('.control-panel'));
+    } else {
+        console.error('找不到測試區域元素，功能驗證無法初始化');
     }
 }
 
